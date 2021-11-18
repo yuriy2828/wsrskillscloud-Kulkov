@@ -1,0 +1,29 @@
+2021-11-18 05:44:17,679 p=2063 u=root n=ansible | Decryption successful
+2021-11-18 07:26:34,031 p=16314 u=root n=ansible | [WARNING]: provided hosts list is empty, only localhost is available. Note that
+the implicit localhost does not match 'all'
+
+2021-11-18 07:26:34,577 p=16314 u=root n=ansible | ERROR! 'file' is not a valid attribute for a Play
+
+The error appears to be in '/root/wsr-skillcloud/dir.yml': line 2, column 3, but may
+be elsewhere in the file depending on the exact syntax problem.
+
+The offending line appears to be:
+
+---
+- name: Create dir
+  ^ here
+
+2021-11-18 07:27:31,394 p=16327 u=root n=ansible | [WARNING]: provided hosts list is empty, only localhost is available. Note that
+the implicit localhost does not match 'all'
+
+2021-11-18 07:27:31,730 p=16327 u=root n=ansible | ERROR! 'ansible.builtin.file' is not a valid attribute for a Play
+
+The error appears to be in '/root/wsr-skillcloud/dir.yml': line 2, column 3, but may
+be elsewhere in the file depending on the exact syntax problem.
+
+The offending line appears to be:
+
+---
+- name: Create dir
+  ^ here
+

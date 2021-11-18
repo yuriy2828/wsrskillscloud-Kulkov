@@ -1,0 +1,139 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+          - name: Update apt package
+            apt:
+                 update_cache: yes
+
+          - name: Install curl
+            apt:
+                 name: curl
+                 state: latest
+
+          - name: Activate UFW
+            ufw:
+                 state: enabled
+
+          - name: Allow port 80
+            ufw:
+                        rule: allow
+                        proto: tcp
+                        port: '80'
+
+          - name: Allow port 8080
+            ufw:
+                        rule: allow
+                        proto: tcp
+                        port: '8080'
+
+          - name: Allow port 1834
+            ufw:
+                        rule: allow
+                        proto: tcp
+                        port: '1834'
+
+          - name: Connection port
+            shell: echo ' 'Port 1834' /etc/ssh/sshd_config'
+
+          - name: Public key
+            shell: echo ' 'PubkeyAuthentication yes' /etc/ssh/sshd_config'
+
+          - name: Copy ssh key
+            copy:
+                        src: ./ssh/id_rsa
+                        dest: /ssh
+                        
+          - name: Add Webdeveloper
+            user:
+                        name: Webdeveloper
+                        password: S52we9V6QTp7
+                        ssh_key_file: /ssh/id_rsa
+
+          - name: Add Devopsengineer
+            user:
+                        name: Devopsengineer
+                        password: dHY6sKGHsj2T
+                        ssh_key_file: ./ssh/id_rsa
+
+          - name: Add Projectmanager
+            user:
+                        name: Projectmanager
+                        password: oP92ugMSaCbe
+                        ssh_key_file: ./ssh/id_rsa
+
+          - name: Install Docker
+            apt:
+                        name: docker
+                        state: latest
+
+          - name: Copy script docker-compose
+            copy: 
+                        src: ./docker-compose.sh
+                        dest: /
+
+          - name: Start script docker-compose
+            shell: /docker-compose.sh
+
+          - name: Create dir
+            file:
+                         path: /skillcloud-nginx
+                         state: directory
+
+          - name: Copy index
+            copy:
+                        src: ./index.html
+                        dest: /skillcloud-nginx
+
+          - name: Copy nginx.conf
+            copy:
+                        src: ./nginx.conf
+                        dest: /skillcloud-nginx
+
+          - name: Copy Dockerfile-balance
+            copy:
+                        src: ./Dockerfile-balance
+                        dest: /skillcloud-nginx
+
+          - name: Copy Dockerfile-site
+            copy:
+                        src: ./Dockerfile-site
+                        dest: /skillcloud-nginx
+
+          - name: Copy docker-compose
+            copy:
+                        src: ./docker-compose.yml
+                        dest: /skillcloud-nginx
+
+          - name: Restart SSH
+            service:
+                        name: sshd
+                        state: restarted
+
+          - name: Restart UFW
+            service:
+                        name: ufw
+                        state: restarted
+
+          - name: Build image site
+            community.docker.docker_image:
+                        name: site
+                        build:
+                                path: /skillcloud-nginx/
+                                dockerfile: /skillcloud-nginx/Dockerfile-site
+                        tag: site
+
+          - name: Build image balance
+            community.docker.docker_image:
+                        name: balance 
+                        build:
+                                 path: /skillcloud-nginx/
+                                 dockerfile: /skillcloud-nginx/Dockerfile-balance
+                        tag: balance
+
+          - name: Run docker-compose
+            shell: docker-compose up
+
+          - name: Reboot system
+            reboot:
+
